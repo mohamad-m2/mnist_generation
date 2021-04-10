@@ -4,7 +4,139 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 import functools as f
-a= csv.reader(open('mnist.csv','r'),delimiter=',')
+import scipy.linalg as sc 
+
+def show_pca_rank(n,dev,z1):
+    k=np.zeros((50));
+    
+    for i in dev:
+        for j in dev[i]:
+            k=k+abs(j.T);
+    k=(k*100)/k.sum()
+    print(k.shape)
+    m=np.array([i.reshape((28,28)) for i in n.T])
+    figure, axes = plt.subplots(nrows=5, ncols=10,sharex=True, sharey=True)
+    j=0
+    for i in m:
+        axes[j//10,j%10].imshow(i,cmap='gray')
+        axes[j//10,j%10].set_title(str(round(k[0,j],1))+'%')
+        j=j+1
+    figure.tight_layout(pad=z1)
+        
+def show_pca(n):
+    m=np.array([i.reshape((28,28)) for i in n.T])
+    figure, axes = plt.subplots(nrows=5, ncols=10)
+    j=0
+    for i in m:
+        axes[j//10,j%10].imshow(i,cmap='gray')
+       
+        j=j+1
+ 
+def show_lda(u):
+    
+    
+    m=np.array([i.reshape((28,28)) for i in n.T])
+    figure, axes = plt.subplots(nrows=5, ncols=2)
+    j=0
+    for i in m:
+        axes[j%5,j//5].idmshow(i,cmap='gray')
+       
+        j=j+1  
+ 
+#trans emlement or dictionary       
+def trans_dic(d,n):
+    dv={i:[np.dot(n.T,k.reshape((784,1))) for k in dic[i]] for i in dic}
+    return dv
+ 
+    
+
+def trans(n1,n2):
+    figure, axes = plt.subplots(nrows=1, ncols=2)
+    
+    
+    axes[0].imshow(n1,cmap='gray')
+    axes[1].imshow(n2,cmap='gray')
+
+def trans_pca(n,x):
+    k=np.dot(n.T,x.reshape((784,1)))
+    d=np.dot(n,k)
+    d=d.reshape((28,28))  
+    return d
+
+trans_lda
+###################################
+    
+ # extract x dim from cov matrix 
+def highst_m(co,x):
+        m,n=np.linalg.eigh(co)
+
+        return (n.T[-1:-(x+1):-1]).T
+             
+
+#######################   
+ 
+# scatter cov matrix
+    
+def extract(co):
+    meanc=sum([sum([abs(k) for k in f]) for f in co])/co.size
+    x=[]
+    y=[]
+    val=[]
+    for idx,i in enumerate(co):
+        for idy,j in enumerate(i):
+            if(abs(j)>10*meanc):
+                x.append(idx)
+                y.append(idy)
+                val.append(math.log(abs(j)))
+    plt.figure()
+    plt.scatter(x,y)
+    
+#################
+    
+def calc_between(dic):
+    mean_class=[]
+    count=[]
+    for i in dic.keys():
+        count.append(np.array(dic[i]).shape[0])
+        mean_class.append(np.array(dic[i]).mean(axis=0))
+        
+    mean_class=np.array(mean_class)
+    mean_tot=mean_class.mean(axis=0)
+    
+    result=0
+    for idx,i in enumerate(mean_class):
+
+        x=i.reshape((i.size,1))-mean_tot.reshape((mean_tot.size,1))
+        result+=count[idx]*np.dot(x,x.T)
+    
+    return  result/sum(count)
+
+def calc_within(dic):
+    mean_class=[]
+    count=0
+    for i in dic.keys():
+        count+=np.array(dic[i]).shape[0]
+        mean_class.append(np.array(dic[i]).mean(axis=0))
+        
+    mean_class=np.array(mean_class)
+    
+    result=0
+    for idx,i in enumerate(dic.keys()):
+        for j in dic[i]:
+           
+            x= j.reshape((j.size,1))-mean_class[idx].reshape((mean_class[idx].size,1))
+            result+=np.dot(x,x.T)
+    
+    return  result/count
+
+
+def compute_lda(x,y,m):
+
+    s,u=sc.eigh(x,y)    
+    return u[:,-1:-(m+1):-1]
+
+
+a= csv.reader(open('mnist.csv','r'),delim iter=',')
 next(a)
 
 dic={}
@@ -36,96 +168,17 @@ for i in temp:
     
 cov=cov/(sum([len(dic_center[i]) for i in dic_center]))
 
+n=highst_m(cov,50)
+dic_pca=trans_dic(dic,n)
+sw=calc_within(pca_dic)
+sb=calc_between(pca_dic)
+u=compute_lda(sb,sw,10)
+UW, _, _ = np.linalg.svd(u)
+U = UW[:, 0:10]
 #end
-def show_pca_rank(n,dev,z1):
-    k=np.zeros((50));
-    
-    for i in dev:
-        for j in dev[i]:
-            k=k+abs(j.T);
-    k=(k*100)/k.sum()
-    print(k.shape)
-    m=np.array([i.reshape((28,28)) for i in n.T])
-    figure, axes = plt.subplots(nrows=5, ncols=10,sharex=True, sharey=True)
-    j=0
-    for i in m:
-        axes[j//10,j%10].imshow(i,cmap='gray')
-        axes[j//10,j%10].set_title(str(round(k[0,j],1))+'%')
-        j=j+1
-    figure.tight_layout(pad=z1)
-        
-def show_pca(n):
-    m=np.array([i.reshape((28,28)) for i in n.T])
-    figure, axes = plt.subplots(nrows=5, ncols=10)
-    j=0
-    for i in m:
-        axes[j//10,j%10].imshow(i,cmap='gray')
-       
-        j=j+1
 
-def trans_dic(d,n):
-    dv={i:[np.dot(n.T,k.reshape((784,1))) for k in dic[i]] for i in dic}
-    return dv
-    
-def trans(n,f):
-    figure, axes = plt.subplots(nrows=1, ncols=2)
-    axes[0].imshow(f,cmap='gray')
-    k=np.dot(n.T,f.reshape((784,1)))
-    
-    
-    d=np.dot(n,k)
 
-    d=d.reshape((28,28))    
-    axes[1].imshow(d,cmap='gray')
-    
-  
-def highst_m(co,x):
-        m,n=np.linalg.eig(co)
-        for i in range(len(n)):
-             swap = i + np.argmax(m[i:])
-             (m[i], m[swap]) = (m[swap], m[i])
-             p=np.array(n[:,swap])
-             n[:,swap]=np.array(n[:,i])
-             n[:,i]=p
-        return m,n[:,:x]
-             
 
-    
-    
-def extract(co):
-    meanc=sum([sum([abs(k) for k in f]) for f in co])/co.size
-    x=[]
-    y=[]
-    val=[]
-    for idx,i in enumerate(co):
-        for idy,j in enumerate(i):
-            if(abs(j)>10*meanc):
-                x.append(idx)
-                y.append(idy)
-                val.append(math.log(abs(j)))
-    plt.figure()
-    plt.scatter(x,y)
-    
-    
-def calc_z(m):
-    z={}
-    for i in m:
-        z[i]= f.reduce(lambda x,y: x+y,m[i])
-        z[i]=z[i]/len(m[i])
-    return z
-    
-def give (k):
-
-        e={i:np.sum((z[i]-k)**2) for i in z}
-        return min(e,key=e.get)
  
-def calc_acc(m):
-    count =0
-    sum2=0
-    for i in m:
-        sum2+=len(m[i])
-        for j in m[i]:
-            if(give(j)!=i):
-                count+=1
-    return (count*100)/sum2
+
         
