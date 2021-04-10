@@ -32,22 +32,27 @@ def show_pca(n):
        
         j=j+1
  
-def show_lda(u):
+def show_lda(u,n):
+    x=[]
+    for i in u.T:
+        x.append(np.dot(i,n.T).reshape((28,28)))
     
-    
-    m=np.array([i.reshape((28,28)) for i in n.T])
+    m=np.array(x)
     figure, axes = plt.subplots(nrows=5, ncols=2)
     j=0
     for i in m:
-        axes[j%5,j//5].idmshow(i,cmap='gray')
+        axes[j%5,j//5].imshow(i,cmap='gray')
        
         j=j+1  
  
 #trans emlement or dictionary       
-def trans_dic(d,n):
+def trans_dic(dic,n):
     dv={i:[np.dot(n.T,k.reshape((784,1))) for k in dic[i]] for i in dic}
     return dv
- 
+
+ def trans_dic_lda(dic,u):
+    dv={i:[np.dot(u.T,k.reshape((50,1))) for k in dic[i]] for i in dic}
+    return dv
     
 
 def trans(n1,n2):
@@ -63,7 +68,12 @@ def trans_pca(n,x):
     d=d.reshape((28,28))  
     return d
 
-trans_lda
+def trans_lda(u,n,x):
+    x=np.dot(u,x)
+    x=np.dot(n,x)    
+    d=x.reshape((28,28))  
+    return d
+
 ###################################
     
  # extract x dim from cov matrix 
@@ -131,12 +141,16 @@ def calc_within(dic):
 
 
 def compute_lda(x,y,m):
-
+    
     s,u=sc.eigh(x,y)    
     return u[:,-1:-(m+1):-1]
 
 
-a= csv.reader(open('mnist.csv','r'),delim iter=',')
+
+
+
+
+a= csv.reader(open('mnist.csv','r'),delimiter=',')
 next(a)
 
 dic={}
@@ -169,14 +183,21 @@ for i in temp:
 cov=cov/(sum([len(dic_center[i]) for i in dic_center]))
 
 n=highst_m(cov,50)
-dic_pca=trans_dic(dic,n)
+pca_dic=trans_dic(dic,n)
 sw=calc_within(pca_dic)
 sb=calc_between(pca_dic)
 u=compute_lda(sb,sw,10)
 UW, _, _ = np.linalg.svd(u)
 U = UW[:, 0:10]
+
+lda_dic=trans_dic_lda(pca_dic,U)
 #end
 
+for i in range(4):
+    c=random.randrange(400)
+    z1=dic[6][c]
+    z2=lda_dic[6][c]
+    trans(z1,z2)
 
 
  
