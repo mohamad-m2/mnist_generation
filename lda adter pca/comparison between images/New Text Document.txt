@@ -1,1 +1,1 @@
-notice that the projection seem quite different from the originale images but all images from the dame class has very similar projection and different proj from images from diff classes
+notice that the projection seem quite different from the originale images but all images from the same class has very similar projection and different proj from images from diff classes
