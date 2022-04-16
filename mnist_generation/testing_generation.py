@@ -5,7 +5,28 @@ import numpy as np
 import math
 import functools as f
 import scipy.linalg as sc 
+import scipy.special
+import scipy.optimize as op
 
+def compute_logistic_loss(train,lamda):
+    n=10
+    def j(v):
+         b=v[-1*n:]
+         w=v[:-1*n].reshape(n,train[0].shape[1])
+         regularize=(lamda/2)*(w*w).sum() 
+         final=0
+         c=0
+         for idx,i in enumerate(train.keys()):
+             score=np.dot(w,train[i].T)+b.reshape((n,1))
+             sum_mul=scipy.special.logsumexp(score, axis=0)
+             y=score-sum_mul
+             t=np.zeros((10,1))
+             t[idx,0]=1
+             final+=(y*t).sum()
+             c+=len(train[i])
+         final=-final/c
+         return final+regularize
+    return j
 
 
 def trans_dic(dic,n):
@@ -66,6 +87,38 @@ def comp(ls,x):
     return True,min1
 
 
+def choose_lam(n,mean20,cov_tied,b,w,label):
+    lmda=0
+    acc_old=0
+    for j in range(80,180):
+        acc=0
+        for i in range(500):
+    
+            gen1=np.random.multivariate_normal(mean20,cov_tied)
+        
+            gen11=(reconstruct([gen1],n)[0]).reshape((784))
+        
+            for idx in range(gen11.size):
+                if(gen11[idx]<j):
+                    gen11[idx]=0
+                else:
+                    gen11[idx]=255
+        
+            k=np.dot(n.T,gen11.reshape((784,1)))
+            
+            score=np.dot(w,k)+b.reshape((10,1))
+            pred=score.argmax(axis=0)
+            if(score[label,0]>10):
+                acc+= (pred==label).sum()-2*abs(1-(j/150))
+        acc=acc/1000
+        if(acc>acc_old):
+            acc_old=acc
+            lmda=j
+    return lmda
+
+
+
+    
 a= csv.reader(open('../mnist.csv','r'),delimiter=',')
 next(a)
 
@@ -98,7 +151,13 @@ n=highst_m(cov,100)
 
 dic_pca=trans_dic(dic,n)
 
+########logisticclassifier
+train ={i:np.array(dic_pca[i])[:,:,0] for i in dic_pca}
+j=compute_logistic_loss(train,0)
+x=op.fmin_l_bfgs_b(j,np.zeros((10*train[0].shape[1])+10),approx_grad = True)
 
+b=x[0][-10:]
+w=x[0][:-10].reshape((10,train[0].shape[1]))
 
 #trying to generate
 
@@ -114,20 +173,36 @@ cov_tied=np.dot(set_c.T,set_c)/set_c.shape[0]
 mean20=used.mean(axis=0)
 
 
+lamda=choose_lam(n,mean20,cov_tied,b,w,0)
 
-gen1=np.random.multivariate_normal(mean20,cov_tied)
 
-gen11=(reconstruct([gen1],n)[0]).reshape((784))
+accepted=False
+gen=0
+while(not accepted):
+    gen1=(np.random.multivariate_normal(mean20,cov_tied)+np.random.multivariate_normal(mean20,cov_tied))/2
+    
+    gen11=(reconstruct([gen1],n)[0]).reshape((784))
+    
+    for idx in range(gen11.size):
+        if(gen11[idx]<lamda):
+            gen11[idx]=0
+        else:
+            gen11[idx]=255
+    k=np.dot(n.T,gen11.reshape((784,1)))
+            
+    score=np.dot(w,k)+b.reshape((10,1))
+    print(score)
+    pred=score.argmax(axis=0)
+    ratio=score[0,0]/score[score[1:,0].argmax(),0]
+    if((pred==0 ).sum()>0  and score[0,0]>10):
+        accepted=True
+        gen=gen11
 
-for idx in range(gen11.size):
-   if(gen11[idx]<100):
-       gen11[idx]=0
-   else:
-       gen11[idx]=255
-
-gen12=gen11.reshape((28,28))
-       
+gen12=gen.reshape((28,28))
+         
 plt.imshow(gen12,cmap='gray')
+
+
 
 
 new=[]
