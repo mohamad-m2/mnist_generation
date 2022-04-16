@@ -1,5 +1,5 @@
 
-# statistical machine learning models for generating hand written digits using the MNIST dataset
+# statistical machine learning models for generating hand written digits using the MNIST dataset [[1]](https://github.com/mohamad-m2/mnist_testing/edit/main/README.md#references)
 
 
 first we start with studying the effect of the dimentionality reduction techniques PCA and LDA those will help gaussianize the mnist data samples for the generation later.
@@ -62,5 +62,8 @@ finally for a better generation we could also consider the gaussian mixture mode
   <img src="./mnist_generation/3_generation/Figure_4.png" width="200">
 </p>
 
-<cite>mnist.bib
-  </cite>
+## References
+<a id="1">[1]</a> 
+Y. LeCun, and C. Cortes. (2010). 
+MNIST handwritten digit database
+http://yann.lecun.com/exdb/mnist/
