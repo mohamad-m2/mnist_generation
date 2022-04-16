@@ -61,12 +61,3 @@ finally for a better generation we could also consider the gaussian mixture mode
   <img src="./mnist_generation/3_generation/Figure_3.png" width="200">
   <img src="./mnist_generation/3_generation/Figure_4.png" width="200">
 </p>
-
----
-output:
-  md_document:
-    variant: markdown_github
-bibliography: mnist.bib
----
-
-[@xie2018]
