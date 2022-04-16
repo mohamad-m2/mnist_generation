@@ -265,14 +265,8 @@ lda_dic=trans_dic_lda(pca_dic,U)
 
 train,test=div(pca_dic,0)
 
-
-
-
-#######
+######
 par=model(train)
-
-
-
 
 acc=0
 count=0
@@ -289,8 +283,6 @@ for idx,i in enumerate(test.keys()):
     acc2[idx]/=c
           
 acc=acc/count
-
-
 
 
 ##### logistic regression
