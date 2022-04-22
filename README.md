@@ -2,8 +2,8 @@
 # statistical machine learning models for generating hand written digits using the MNIST dataset [[1]](#references)
 
 
-first we start with studying the effect of the dimentionality reduction techniques PCA and LDA those will help gaussianize the mnist data samples for the generation later.
-for the generation we estimate the gaussion distribution of each class, then sample from that distribution.
+First we start with studying the effect of the dimentionality reduction techniques PCA and LDA those will help gaussianize the mnist data samples for the generation later.
+For the generation we estimate the gaussion distribution of each class, then sample from that distribution.
 
 ## PCA 50 feature vectors
 ![pca](./pca_analysis/new_basis_50.png)
@@ -14,9 +14,9 @@ for the generation we estimate the gaussion distribution of each class, then sam
 
 ---
 
-we can also study the quality of the reconstructed sample from both LDA and PCA.
+Fe can also study the quality of the reconstructed sample from both LDA and PCA.
 PCA focus on the dimensions with highest variances, the reconstruction error is minimal and the reconstructed image is similar to the initial one.
-while for LDA which focuses on minimizing intra class variance and maximimze the inter class one (supervised) the reconstruction error is high.
+While for LDA which focuses on minimizing intra class variance and maximimze the inter class one (supervised) the reconstruction error is high.
 
 ## some reconstructed samples after PCA 
 <p align="center">
@@ -36,9 +36,9 @@ while for LDA which focuses on minimizing intra class variance and maximimze the
 
 ---
 ## generation
-for checking how different the images we generate from all the other images with the same class in the dataset we can implement a simple distance function and take the minimum distance between our geerated image and all the other images presented in the data
-this can work for mnist dataset since the only value the pixel can have are either 0 for black and 1 for white.
-finally for a better generation we could also consider the gaussian mixture model for estimating the distribution of the classes instead of 1 simple gaussian distribution. 
+For checking how different the images we generate from all the other images with the same class in the dataset we can implement a simple distance function and take the minimum distance between our geerated image and all the other images presented in the data.
+This can work for mnist dataset since the only value the pixel can have are either 0 for black and 1 for white.
+Finally for a better generation we could also consider the gaussian mixture model for estimating the distribution of the classes instead of 1 simple gaussian distribution. 
 
 <p align="center">
   <img src="./mnist_generation/0_generated/Figure_1.png" width="200">
