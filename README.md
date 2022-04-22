@@ -14,7 +14,7 @@ For the generation we estimate the gaussion distribution of each class, then sam
 
 ---
 
-Fe can also study the quality of the reconstructed sample from both LDA and PCA.
+We can also study the quality of the reconstructed sample from both LDA and PCA.
 PCA focus on the dimensions with highest variances, the reconstruction error is minimal and the reconstructed image is similar to the initial one.
 While for LDA which focuses on minimizing intra class variance and maximimze the inter class one (supervised) the reconstruction error is high.
 
